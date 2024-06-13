@@ -65,7 +65,7 @@ func (s *Shell) Run() {
 	}
 
 	if cmd, ok := commands[command]; ok {
-		cmd(splits[1:], s.writer)
+		cmd(splits, s.writer)
 		return
 	}
 
