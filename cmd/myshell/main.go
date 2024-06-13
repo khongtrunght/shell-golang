@@ -23,7 +23,7 @@ func (s *Shell) Repl() {
 type Command func(args []string, writer io.Writer)
 
 func exitCommand(args []string, writer io.Writer) {
-	if len(args) == 1 {
+	if len(args) == 2 {
 		if args[1] == "0" {
 			os.Exit(0)
 		} else {
