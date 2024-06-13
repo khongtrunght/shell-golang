@@ -57,7 +57,7 @@ func typeCommand(args []string, writer io.Writer) {
 		if _, ok := commands[args[1]]; ok {
 			fmt.Fprintf(writer, "%s is a shell builtin\n", args[1])
 		} else {
-			fmt.Fprintf(writer, "%s: command not found\n", args[1])
+			fmt.Fprintf(writer, "%s: not found\n", args[1])
 		}
 	} else {
 		fmt.Fprintln(writer, "type: too many arguments")
