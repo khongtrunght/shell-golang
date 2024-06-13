@@ -42,9 +42,26 @@ func echoCommand(args []string, writer io.Writer) {
 	}
 }
 
-var commands = map[string]Command{
-	"exit": exitCommand,
-	"echo": echoCommand,
+var commands = map[string]Command{}
+
+func init() {
+	commands["exit"] = exitCommand
+	commands["echo"] = echoCommand
+	commands["type"] = typeCommand
+}
+
+func typeCommand(args []string, writer io.Writer) {
+	if len(args) == 1 {
+		fmt.Fprintln(writer, "type: missing argument")
+	} else if len(args) == 2 {
+		if _, ok := commands[args[1]]; ok {
+			fmt.Fprintf(writer, "%s is a shell builtin\n", args[1])
+		} else {
+			fmt.Fprintf(writer, "%s: command not found\n", args[1])
+		}
+	} else {
+		fmt.Fprintln(writer, "type: too many arguments")
+	}
 }
 
 func (s *Shell) Run() {
