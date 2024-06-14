@@ -68,6 +68,28 @@ func echoCommand(args []string, writer io.Writer) {
 	}
 }
 
+func changeDirCommand(args []string, writer io.Writer) {
+	switch len(args) {
+	case 1:
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			fmt.Fprintln(writer, "cd: error: ", err)
+			return
+		}
+		err = os.Chdir(homeDir)
+		if err != nil {
+			fmt.Fprintln(writer, "cd: error: ", err)
+		}
+	case 2:
+		err := os.Chdir(args[1])
+		if err != nil {
+			fmt.Fprintln(writer, "cd: error: ", err)
+		}
+	default:
+		fmt.Fprintln(writer, "cd: too many arguments")
+	}
+}
+
 var (
 	commands       = map[string]Command{}
 	excutableFiles = make(map[string]string)
@@ -77,6 +99,7 @@ func init() {
 	commands["exit"] = exitCommand
 	commands["echo"] = echoCommand
 	commands["type"] = typeCommand
+	commands["cd"] = changeDirCommand
 }
 
 func typeCommand(args []string, writer io.Writer) {
