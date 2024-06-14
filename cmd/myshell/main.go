@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -15,6 +16,30 @@ type Shell struct {
 }
 
 func (s *Shell) Repl() {
+	// load path from env
+	path := os.Getenv("PATH")
+
+	if path != "" {
+		pathList := strings.Split(path, ":")
+		for _, p := range pathList {
+			// get all executable files in the path
+			files, err := os.ReadDir(p)
+			if err != nil {
+				log.Println("Error reading directory: ", err)
+			}
+			for _, file := range files {
+				if !file.IsDir() {
+					info, err := file.Info()
+					if err != nil {
+						log.Println("Error reading file info: ", err)
+					}
+					if info.Mode()&0111 != 0 {
+						excutableFiles[file.Name()] = filepath.Join(p, file.Name())
+					}
+				}
+			}
+		}
+	}
 	for {
 		s.Run()
 	}
@@ -42,7 +67,10 @@ func echoCommand(args []string, writer io.Writer) {
 	}
 }
 
-var commands = map[string]Command{}
+var (
+	commands       = map[string]Command{}
+	excutableFiles = make(map[string]string)
+)
 
 func init() {
 	commands["exit"] = exitCommand
@@ -56,6 +84,8 @@ func typeCommand(args []string, writer io.Writer) {
 	} else if len(args) == 2 {
 		if _, ok := commands[args[1]]; ok {
 			fmt.Fprintf(writer, "%s is a shell builtin\n", args[1])
+		} else if _, ok := excutableFiles[args[1]]; ok {
+			fmt.Fprintf(writer, "%s is %s\n", args[1], excutableFiles[args[1]])
 		} else {
 			fmt.Fprintf(writer, "%s: not found\n", args[1])
 		}
