@@ -76,11 +76,17 @@ func changeDirCommand(args []string, writer io.Writer) {
 			fmt.Fprintln(writer, "cd: error: ", err)
 			return
 		}
-		err = os.Chdir(homeDir)
-		if err != nil {
-			fmt.Fprintf(writer, "%s: No such file or directory\n", homeDir)
-		}
+		_ = os.Chdir(homeDir)
 	case 2:
+		if args[1] == "~" {
+			homeDir, err := os.UserHomeDir()
+			if err != nil {
+				fmt.Fprintln(writer, "cd: error: ", err)
+				return
+			}
+			_ = os.Chdir(homeDir)
+			return
+		}
 		err := os.Chdir(args[1])
 		if err != nil {
 			fmt.Fprintf(writer, "%s: No such file or directory\n", args[1])
