@@ -78,12 +78,12 @@ func changeDirCommand(args []string, writer io.Writer) {
 		}
 		err = os.Chdir(homeDir)
 		if err != nil {
-			fmt.Fprintln(writer, "cd: error: ", err)
+			fmt.Fprintf(writer, "%s: No such file or directory\n", homeDir)
 		}
 	case 2:
 		err := os.Chdir(args[1])
 		if err != nil {
-			fmt.Fprintln(writer, "cd: error: ", err)
+			fmt.Fprintf(writer, "%s: No such file or directory\n", args[1])
 		}
 	default:
 		fmt.Fprintln(writer, "cd: too many arguments")
