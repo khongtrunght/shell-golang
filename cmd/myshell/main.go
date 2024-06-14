@@ -126,6 +126,7 @@ func (s *Shell) Run() {
 		if err != nil {
 			log.Println("Error running command: ", err)
 		}
+		return
 
 	}
 
