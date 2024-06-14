@@ -25,7 +25,7 @@ func (s *Shell) Repl() {
 			// get all executable files in the path
 			files, err := os.ReadDir(p)
 			if err != nil {
-				log.Println("Error reading directory: ", err)
+				continue
 			}
 			for _, file := range files {
 				if !file.IsDir() {
