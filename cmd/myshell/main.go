@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -114,6 +115,18 @@ func (s *Shell) Run() {
 	if cmd, ok := commands[command]; ok {
 		cmd(splits, s.writer)
 		return
+	}
+
+	if _, ok := excutableFiles[command]; ok {
+		// run program with args
+		execCmd := exec.Command(excutableFiles[command], splits[1:]...)
+		execCmd.Stdout = s.writer
+		execCmd.Stderr = s.writer
+		err := execCmd.Run()
+		if err != nil {
+			log.Println("Error running command: ", err)
+		}
+
 	}
 
 	// <command_name>: command not found
